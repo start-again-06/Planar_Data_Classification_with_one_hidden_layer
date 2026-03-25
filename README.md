@@ -1,98 +1,161 @@
-# Planar_Data_Classification_with_one_hidden_layer
+# Planar Data Classification with One Hidden Layer
 
 ## Neural Network from Scratch on Planar Datasets
 
-This repository implements a two-layer neural network from scratch using NumPy to classify simple 2D planar datasets. The project focuses on learning non-linear decision boundaries for datasets such as spirals, moons, circles, and blobs, without using high-level machine learning frameworks.
-
-It is designed for educational purposes to build an intuitive understanding of forward propagation, backpropagation, and gradient-based optimization in shallow neural networks.
+This project implements a two-layer neural network from scratch using NumPy to classify simple 2D planar datasets. It focuses on learning non-linear decision boundaries for datasets such as spirals, moons, circles, and blobs without using high-level machine learning frameworks.
 
 ---
 
 ## Features
 
-- Two-layer neural network implemented from scratch using NumPy  
-- Manual implementation of forward and backward propagation  
-- Binary cross-entropy cost computation  
-- Gradient descent–based parameter updates  
-- Visualization of 2D datasets and learned decision boundaries  
-- Comparison with logistic regression baseline  
-- Experiments with varying hidden layer sizes  
-- Support for multiple synthetic datasets  
+- Two-layer neural network (input → hidden → output)
+- Forward propagation implemented manually
+- Backward propagation using chain rule
+- Binary cross-entropy loss
+- Gradient descent optimization
+- Decision boundary visualization
+- Logistic regression baseline comparison
+- Hyperparameter experimentation
+
+---
+
+## Tech Stack
+
+- Python
+- NumPy
+- Matplotlib
+- Scikit-learn
 
 ---
 
 ## Dataset
 
-The neural network is trained on synthetic 2D datasets generated using `sklearn.datasets`, including:
+Synthetic datasets generated using `sklearn.datasets`:
 
-- Planar dataset  
-- Noisy circles  
-- Noisy moons  
-- Gaussian quantiles  
-- Random blobs  
-
-All datasets are visualized with color-coded class labels and loaded using utility functions.
+- Planar dataset
+- Noisy circles
+- Noisy moons
+- Gaussian quantiles
+- Random blobs
 
 ---
 
-## Architecture
+## System Architecture
 
-### Two-Layer Neural Network
+```mermaid
+flowchart TD
+    A[Dataset Generation<br>sklearn.datasets] --> B[Data Preprocessing]
+    B --> C[Model Initialization]
 
-- Input layer size: number of input features (2 for 2D datasets)  
-- Hidden layer: configurable number of neurons (default = 4)  
-- Output layer: binary classification using sigmoid activation  
+    C --> D[Forward Propagation]
+    D --> E[Hidden Layer (tanh)]
+    E --> F[Output Layer (sigmoid)]
 
-### Activation Functions
+    F --> G[Cost Computation (Binary Cross-Entropy)]
 
-- Hidden layer: `tanh`  
-- Output layer: `sigmoid`  
+    G --> H[Backward Propagation]
+    H --> I[Gradient Computation]
+
+    I --> J[Gradient Descent Update]
+    J --> D
+
+    D --> K[Prediction]
+    K --> L[Evaluation]
+    L --> M[Decision Boundary Visualization]
+```
+
+## Model Architecture
+
+| Layer         | Description |
+|--------------|------------|
+| Input Layer   | 2 features |
+| Hidden Layer  | Configurable (default = 4 neurons) |
+| Output Layer  | 1 neuron (binary classification) |
 
 ---
 
-## Learning Process
+## Activation Functions
 
-The training pipeline consists of:
+- Hidden Layer: `tanh`  
+- Output Layer: `sigmoid`  
 
-- Forward propagation to compute activations  
-- Cost computation using binary cross-entropy loss  
-- Backward propagation to compute gradients  
-- Gradient descent for parameter updates  
+---
 
-Training is performed over a fixed number of iterations with a configurable learning rate. Cost values are logged and used to assess convergence.
+## Mathematical Formulation
+
+### Forward Propagation
+
+```python
+Z1 = W1 @ X + b1
+A1 = np.tanh(Z1)
+
+Z2 = W2 @ A1 + b2
+A2 = sigmoid(Z2)
+```
+### Cost Loss Function
+$$
+L = -\frac{1}{m} \sum \left[ Y \log(A_2) + (1 - Y)\log(1 - A_2) \right]
+$$
+
+### Backward Propagation
+
+Gradients are computed using the chain rule:
+
+```python
+# Output layer gradients
+dZ2 = A2 - Y
+dW2 = (1/m) * np.dot(dZ2, A1.T)
+db2 = (1/m) * np.sum(dZ2, axis=1, keepdims=True)
+
+# Hidden layer gradients
+dZ1 = np.dot(W2.T, dZ2) * (1 - np.power(A1, 2))
+dW1 = (1/m) * np.dot(dZ1, X.T)
+db1 = (1/m) * np.sum(dZ1, axis=1, keepdims=True)
+```
+
+### Parameter Update
+
+```python
+# Update weights and biases using gradient descent
+W1 = W1 - alpha * dW1
+b1 = b1 - alpha * db1
+
+W2 = W2 - alpha * dW2
+b2 = b2 - alpha * db2
+```
+
+## Training Pipeline
+
+1. **Initialize parameters** (`W1`, `b1`, `W2`, `b2`)  
+2. **Loop for `n` iterations**:  
+   - Forward propagation to compute activations  
+   - Compute cost using binary cross-entropy  
+   - Backward propagation to calculate gradients  
+   - Update parameters using gradient descent  
+3. Return the trained model  
 
 ---
 
 ## Evaluation
 
-Model performance is evaluated using:
+- Measure **training accuracy**  
+- Visualize **decision boundaries** on 2D datasets  
+- Compare with **logistic regression** to see linear vs non-linear boundaries  
 
-- Training accuracy  
-- Decision boundary visualization on 2D datasets  
-- Comparison with logistic regression to highlight non-linear modeling capability  
-- Accuracy and boundary behavior for different hidden layer sizes  
+---
+
+## Key Insight
+
+- **Logistic regression** → Linear decision boundary   
+- **Neural network** → Non-linear decision boundary   
 
 ---
 
 ## Experiments
 
-The repository allows experimentation with:
+You can experiment with:
 
-- Hidden layer size (`n_h`)  
-- Number of training iterations  
-- Learning rate  
-- Dataset type  
-
-Results are visualized and corresponding accuracies are printed for comparison.
-
----
-
-## Requirements
-
-The project requires the following Python libraries:
-
-- numpy  
-- matplotlib  
-- scikit-learn  
-
-
+- **Hidden layer size** (`n_h`)  
+- **Learning rate** (`alpha`)  
+- **Number of training iterations**  
+- **Dataset type** (circles, moons, blobs, etc.)  
