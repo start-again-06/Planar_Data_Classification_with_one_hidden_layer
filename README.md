@@ -48,10 +48,10 @@ flowchart TD
     B --> C[Model Initialization]
 
     C --> D[Forward Propagation]
-    D --> E[Hidden Layer (tanh)]
-    E --> F[Output Layer (sigmoid)]
+    D --> E[Hidden Layer - tanh]
+    E --> F[Output Layer - sigmoid]
 
-    F --> G[Cost Computation (Binary Cross-Entropy)]
+    F --> G[Cost Computation - Binary Cross-Entropy]
 
     G --> H[Backward Propagation]
     H --> I[Gradient Computation]
